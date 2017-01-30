@@ -53,12 +53,12 @@ func (config *Config) GetTags(w http.ResponseWriter, r *http.Request) {
 
 	hub, err := config.Auth()
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	tags, err := hub.Tags(name)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	sort.Strings(tags)
@@ -77,7 +77,7 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/catalog", config.GetRepositories)
+	router.HandleFunc("/catalog", config.GetRepositories).Methods("GET")
 	router.HandleFunc("/tags/{name}", config.GetTags).Methods("GET")
 	log.Fatal("ListenAndServe: ", http.ListenAndServe(":8080", router))
 }
