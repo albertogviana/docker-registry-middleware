@@ -23,5 +23,15 @@ _testmain.go
 *.test
 *.prof
 
-*.iml
-.idea
+# never checkin from the bin file (for now)
+bin/*
+
+# Test key files
+*.pem
+
+# Cover profiles
+*.out
+
+# Editor/IDE specific files.
+*.sublime-project
+*.sublime-workspace
