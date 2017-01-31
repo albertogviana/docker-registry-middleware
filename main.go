@@ -7,6 +7,9 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"os"
+	"io/ioutil"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -68,11 +71,34 @@ func (config *Config) GetTags(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func Load(path string) (config *Config, err error) {
+	var configFile Config
+
+	f, err := os.Open(os.ExpandEnv(path))
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	d, err := ioutil.ReadAll(f)
+	if err != nil {
+		return
+	}
+
+	err = yaml.Unmarshal(d, &configFile)
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
+	config = &configFile
+
+	return config, nil
+}
+
 func main() {
-	config := &Config{
-		Url:      "",
-		Username: "",
-		Password: "",
+	config, err := Load("config.yml")
+	if err != nil {
+		log.Panic(err)
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
